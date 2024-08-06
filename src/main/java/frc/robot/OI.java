@@ -1,9 +1,5 @@
 package frc.robot;
 
-import frc.robot.commands.claw.ToggleClaw;
-import frc.robot.util.Constants;
-import frc.robot.util.XboxGamepad;
-
 public class OI {
     private static OI instance;
 
@@ -12,7 +8,7 @@ public class OI {
      * Create two XboxGamepad instance variables
      * - one is the driver
      * - one is the operator
-     * 
+     * S
      * Instantiate both instance vars. with the id provided in RobotMap.java
      * when the Right DPad Button of the driver is true, toggle the claw (remember its a command you wrote)
      * ====================================================================================================
