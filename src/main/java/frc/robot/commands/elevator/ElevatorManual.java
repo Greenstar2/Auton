@@ -1,5 +1,12 @@
 package frc.robot.commands.elevator;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.OI;
+import frc.robot.commands.claw.ToggleClaw;
+import frc.robot.subsystems.AngledElevator;
+import frc.robot.util.XboxGamepad;
+
 /**
  * ==================================
  * Remember what needs to be extended
@@ -7,7 +14,9 @@ package frc.robot.commands.elevator;
  * What methods do we need?
  * ==================================
  */
-public class ElevatorManual /* TODO: extends what? */ {
+public class ElevatorManual extends CommandBase {
+    private static ElevatorManual instance;
+    
 
     /**
      * =====================================
@@ -15,6 +24,10 @@ public class ElevatorManual /* TODO: extends what? */ {
      * =====================================
      */
     // TODO: function here [delete this comment]
+    private ElevatorManual () {
+        addRequirements(AngledElevator.getInstance());
+    }
+
     
     public void execute() {
         /**
@@ -24,6 +37,15 @@ public class ElevatorManual /* TODO: extends what? */ {
          * ================================================================================
          */
         // TODO: code here [delete this comment]
+        if (OI.getInstance().getDriverInstance().getUpDPadButtonState()) {
+            AngledElevator.getInstance().moveToPosition(AngledElevator.getInstance().getCurrentEncoderPosition() + 500);
+        }
+
+        if (OI.getInstance().getDriverInstance().getDownDPadButtonState()) {
+            AngledElevator.getInstance().moveToPosition(AngledElevator.getInstance().getCurrentEncoderPosition() - 500);
+        }
+    
+    
 
         /**
          * ==========================================
@@ -31,6 +53,7 @@ public class ElevatorManual /* TODO: extends what? */ {
          * ==========================================
          */
         // TODO: code here [delete this comment]
+        AngledElevator.getInstance().moveToPosition(AngledElevator.getInstance().getDesiredPosition());
     }
 
     /**
@@ -40,4 +63,7 @@ public class ElevatorManual /* TODO: extends what? */ {
      * =======================
      */
     // TODO: function here [delete this comment]
+    public void end() {
+        AngledElevator.getInstance().setElevatorPower(0);
+    }
 }

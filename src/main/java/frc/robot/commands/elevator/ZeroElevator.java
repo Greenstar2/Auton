@@ -1,5 +1,9 @@
 package frc.robot.commands.elevator;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotMap;
+import frc.robot.subsystems.AngledElevator;
+
 /**
  * ==================================
  * Remember what needs to be extended
@@ -7,7 +11,7 @@ package frc.robot.commands.elevator;
  * What methods do we need?
  * ==================================
  */
-public class ZeroElevator /* TODO: extends what? */ {
+public class ZeroElevator extends CommandBase {
 
     /**
      * =====================================
@@ -15,6 +19,9 @@ public class ZeroElevator /* TODO: extends what? */ {
      * =====================================
      */
     // TODO: function here [delete this comment]
+    public ZeroElevator () {
+        addRequirements(AngledElevator.getInstance());
+    }
 
 
     /** What method is this?
@@ -24,6 +31,9 @@ public class ZeroElevator /* TODO: extends what? */ {
      * =============================
      */
     // TODO: function here [delete this comment]
+    public void execute() {
+        AngledElevator.getInstance().setElevatorPower(RobotMap.ZeroElevator.ZERO_SPEED);
+    }
 
 
     /**
@@ -35,12 +45,25 @@ public class ZeroElevator /* TODO: extends what? */ {
      * @return a boolean
      */
     // TODO: function here [delete this comment]
+    public boolean isFinished() {
+        if (AngledElevator.getInstance().getCurrentEncoderPosition() == 0) {
+            return true;
+        }
+        return false;
+    }
 
 
     /**
      * =======================================================================
-     * End: Reset Encoders and Move Elevator to lowest position (ground level aka 0)
+     * End: Reset Encoders and Move Elevator and Move Elevator to lowest position (ground level aka 0)
      * =======================================================================
      */
     // TODO: function here [delete this comment]
+    public void end(boolean interrupted) {
+        
+        
+        AngledElevator.getInstance().moveToPosition(0);
+            
+    
+    }
 }

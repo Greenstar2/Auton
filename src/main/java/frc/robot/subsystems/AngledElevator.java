@@ -2,7 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.NeutralOut;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -10,9 +13,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import frc.robot.util.Constants;
 
-public class AngledElevator /* TODO: extends what? */ {
+public class AngledElevator extends SubsystemBase {
     private static AngledElevator instance;
     private double desiredPosition;
+    private TalonFX master;
+    private TalonFX follower;
+    private DigitalInput limitSwitch;
 
     /**
      * =========================================================
@@ -22,8 +28,17 @@ public class AngledElevator /* TODO: extends what? */ {
      * Call initElevator
      * =========================================================
      */
+
+    private AngledElevator () {
+        master = new TalonFX(RobotMap.AngledElevator.MASTER_ID);
+        follower = new TalonFX(RobotMap.AngledElevator.FOLLOWER_ID);
+        limitSwitch = new DigitalInput(RobotMap.AngledElevator.LIMIT_SWITCH_ID);
+        initElevator();
+    }
+    
     
     // TODO: function here [delete this comment]
+    
 
 
 
@@ -34,6 +49,7 @@ public class AngledElevator /* TODO: extends what? */ {
      */
     private void initElevator() {
         
+        follower.follow(master);
 
         /**
          * =========================================================
@@ -75,6 +91,9 @@ public class AngledElevator /* TODO: extends what? */ {
      */
 
     // TODO: function here [delete this comment]
+    public void setDesiredPosition(double position) {
+        desiredPosition = position;
+    } 
 
     /**
      * ===================================================
@@ -84,6 +103,9 @@ public class AngledElevator /* TODO: extends what? */ {
      */
 
     // TODO: function here [delete this comment]
+    public double getDesiredPosition() {
+        return desiredPosition;
+    }
 
     /**
      * ==============================================================================================================================
@@ -96,6 +118,9 @@ public class AngledElevator /* TODO: extends what? */ {
      */
 
     // TODO: function here [delete this comment]
+    public boolean lessThanMaxError(double desiredposition) {
+        return (Math.abs(desiredposition) - getCurrentEncoderPosition()) < RobotMap.AngledElevator.MAX_ERROR;
+    }
 
     /**
      * ======================================================================
@@ -105,6 +130,9 @@ public class AngledElevator /* TODO: extends what? */ {
      */
 
     // TODO: function here [delete this comment]
+    public double getCurrentEncoderPosition() {
+        return master.getSelectedSensorPosition();
+    }
 
     /** Small Functions Below
      * =========================================================================
@@ -116,6 +144,9 @@ public class AngledElevator /* TODO: extends what? */ {
      * =========================================================================
      */
 
+    
+    
+
     /**
      * if power is 0, disable the motor
      * @param   power
@@ -123,23 +154,40 @@ public class AngledElevator /* TODO: extends what? */ {
      */
 
     // TODO: function here [delete this comment]
+    public void setElevatorPower(double power) {
+        if (power == 0)
+            master.neutralOutput();
+        else
+            master.set(ControlMode.PercentOutput, power);
+        
+        
+    }
 
 
     /**
      * @return  resetted encoders (set postion of the encoders to zero)
      */
     // TODO: function here [delete this comment]
+    public void setEncoderPositionToZero() {
+        master.setSelectedSensorPosition(0);
+    }
 
     /**
      * @return  whether elevator is at ground level (at the bottom)
      */
 
     // TODO: function here [delete this comment]
+    public boolean onGroundLevel() {
+        return !limitSwitch.get();
+    }
 
     /**
      * @return  if the elevator is extended to the max
      */
     // TODO: function here [delete this comment]
+    public boolean extendedToMax() {
+        return getCurrentEncoderPosition() > RobotMap.AngledElevator.FORWARD_LIMIT;
+    }
 
 
     /**
@@ -149,4 +197,9 @@ public class AngledElevator /* TODO: extends what? */ {
      */
 
     // TODO: function here [delete this comment]
+    public static AngledElevator getInstance() {
+        if (instance == null)
+            instance = new AngledElevator();
+        return instance;
+    }
 }
